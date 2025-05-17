@@ -98,7 +98,7 @@ public class BorrowingsServices : IBorrowingsServices
     }
 
     //3
-    public async Task<int> GetAllCountBorrowings(int id)
+    public async Task<int> GetAllCountBorrowingsAsync(int id)
     {
         using var connection = await context.GetConnection();
         var cmd = @"select br.bookid, count(*) from borrowings br
@@ -109,7 +109,7 @@ public class BorrowingsServices : IBorrowingsServices
     }
 
     //4
-    public async Task<decimal> AvgShtrafSrok(int id)
+    public async Task<decimal> AvgShtrafSrokAsync(int id)
     {
         using var connection = await context.GetConnection();
         var cmd = @"select avg(fine)

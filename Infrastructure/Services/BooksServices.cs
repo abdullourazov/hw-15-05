@@ -61,7 +61,7 @@ public class BooksServices : IBooksServices
     }
 
     //1
-    public async Task<Books?> PopularBook(int id)
+    public async Task<Books?> PopularBookAsync(int id)
     {
         using var connection = await context.GetConnection();
         var cmd = @"select b.*
@@ -73,7 +73,53 @@ public class BooksServices : IBooksServices
         var result = await connection.QuerySingleOrDefaultAsync<Books?>(cmd, new { bookId = id });
         return result;
     }
-    
-        
+
+    //5
+    public async Task<List<Books>> BookNotInMembersAsync()
+    {
+        using var connection = await context.GetConnection();
+        var cmd = @"select b.* from books b
+                    join borrowings br on b.bookid = br.bookid
+                    where returndate is  null";
+        var result = await connection.QueryAsync<Books>(cmd);
+        return result.ToList();
+    }
+
+    //6
+    public async Task<List<Books>> BooksNotAvailableCopiesAsync()
+    {
+        using var connection = await context.GetConnection();
+        var cmd = @"select b.* from books b
+                    where totalcopies <= (select count(*)
+                    from borrowings br
+                    where br.bookid = b.bookid and br.returndate is null)";
+        var result = await connection.QueryAsync<Books>(cmd);
+        return result.ToList();
+    }
+
+    //7
+    public async Task<int> BooksNotGetAsync(Books books)
+    {
+        using var connection = await context.GetConnection();
+        var cmd = @"select count(*) from books b
+                        left join borrowings br on br.bookid = b.bookid
+                        where br.bookid is null";
+        var result = await connection.ExecuteScalarAsync<int>(cmd, books);
+        return result;
+    }
+    //9
+    public async Task<string> PopularGenreAsync()
+    {
+        using var connection = await context.GetConnection();
+        var cmd = @"select  b.genre from books b
+                    join borrowings br on br.bookid =  b.bookid
+                    group by b.genre
+                    order by  count(br.bookid) desc
+                    limit 1";
+        var result = await connection.QuerySingleOrDefaultAsync<string>(cmd);
+        return result;
+    }
+
+
 
 }

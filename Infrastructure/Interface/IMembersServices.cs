@@ -9,6 +9,8 @@ public interface IMembersServices
     Task<Members?> GetMembersByIdAsync(int id);
     Task<bool> UpdateMembersAsync(Members members);
     Task<bool> DeleteMembersAsync(Members members);
-    Task<Members?> ActiveMembers(int id);
+    Task<Members?> ActiveMembersAsync(int id);
+    Task<int> CountMembersOneBorrowingsAsync(Members members);
+
     
 }

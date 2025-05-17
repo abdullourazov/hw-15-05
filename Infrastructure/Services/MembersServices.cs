@@ -63,7 +63,7 @@ public class MembersServices : IMembersServices
 
     //2
 
-    public async Task<Members?> ActiveMembers(int id)
+    public async Task<Members?> ActiveMembersAsync(int id)
     {
         using var connection = await context.GetConnection();
         var cmd = @"select m.* from members m
@@ -75,5 +75,15 @@ public class MembersServices : IMembersServices
         return result;
     }
 
-    
+    //8
+    public async Task<int> CountMembersOneBorrowingsAsync(Members members)
+    {
+        using var connection = await context.GetConnection();
+        var cmd = @"select count(distinct m.memberid) from members m
+                    join borrowings b on b.memberid = m.memberid";
+        var result = await connection.ExecuteScalarAsync<int>(cmd, members);
+        return result;
+    }
+
+
 }

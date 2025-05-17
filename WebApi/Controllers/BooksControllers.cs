@@ -47,4 +47,38 @@ public class BooksControllers : ControllerBase
         var result = await booksServices.DeleteBooksAsync(books);
         return result;
     }
+
+    [HttpGet("popular/{id}")]
+    public async Task<Books?> PopularBookAsync(int id)
+    {
+        return await booksServices.PopularBookAsync(id);
+    }
+
+    [HttpGet("spisok")]
+    public async Task<List<Books>> BookNotInMembersAsync()
+    {
+        return await booksServices.BookNotInMembersAsync();
+    }
+
+    [HttpGet("not available")]
+    public async Task<List<Books>> BooksNotAvailableCopiesAsync()
+    {
+        return await booksServices.BooksNotAvailableCopiesAsync();
+    }
+
+    [HttpGet("book not neg")]
+    public async Task<int> BooksNotGetAsync(Books books)
+    {
+        return await booksServices.BooksNotGetAsync(books);
+    }
+
+    [HttpGet("popular genre")]
+    public async Task<string> PopularGenreAsync()
+    {
+        return await booksServices.PopularGenreAsync();
+    }
+
+
+
+
 }

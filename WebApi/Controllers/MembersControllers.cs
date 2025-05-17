@@ -28,7 +28,7 @@ public class MembersControllers : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<Members?> GetMembersAsyncById(int id)
+    public async Task<Members?> GetMembersByIdAsync(int id)
     {
         var result = await membersServices.GetMembersByIdAsync(id);
         return result;
@@ -46,5 +46,17 @@ public class MembersControllers : ControllerBase
     {
         var result = await membersServices.DeleteMembersAsync(members);
         return result;
+    }
+
+    [HttpGet("active/{id}")]
+    public async Task<Members?> ActiveMembersAsync(int id)
+    {
+        return await membersServices.ActiveMembersAsync(id);
+    }
+
+    [HttpGet("count ")]
+    public async Task<int> CountMembersOneBorrowingsAsync(Members members)
+    {
+        return await membersServices.CountMembersOneBorrowingsAsync(members);
     }
 }

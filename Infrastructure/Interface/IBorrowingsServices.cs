@@ -5,10 +5,10 @@ namespace Infrastructure.Interface;
 public interface IBorrowingsServices
 {
     Task<List<Borrowings>> GetAllBorrowingsAsync();
-    Task<Borrowings?> GetBorrowingsByMemberId(int memberId);
+    Task<Borrowings?> GetBorrowingsByMemberIdAsync(int memberId);
     Task<string> CreateBorrowingAsync(Borrowings borrowings);
     Task<string> ReturnBookAsync(int BorrowingId);
-    Task<int> GetAllCountBorrowings(int id);
-    Task<decimal> AvgShtrafSrok(int id);
+    Task<int> GetAllCountBorrowingsAsync(int id);
+    Task<decimal> AvgShtrafSrokAsync(int id);
 
 }

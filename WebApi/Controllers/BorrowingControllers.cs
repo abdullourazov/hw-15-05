@@ -18,9 +18,9 @@ public class BorrowingControllers : ControllerBase
     }
 
     [HttpGet("memberId")]
-    public async Task<Borrowings?> GetBorrowingsByMemberId(int memberId)
+    public async Task<Borrowings?> GetBorrowingsByMemberIdAsync(int memberId)
     {
-        return await borrowingsServices.GetBorrowingsByMemberId(memberId);
+        return await borrowingsServices.GetBorrowingsByMemberIdAsync(memberId);
     }
 
     [HttpPost]
@@ -34,6 +34,21 @@ public class BorrowingControllers : ControllerBase
     {
         return await borrowingsServices.ReturnBookAsync(BorrowingId);
     }
+
+    [HttpGet("count/{id}")]
+    public async Task<int> GetAllCountBorrowingsAsync(int id)
+    {
+        return await borrowingsServices.GetAllCountBorrowingsAsync(id);
+    }
+
+    [HttpGet("avg/{id}")]
+    public async Task<decimal> AvgShtrafSrokAsync(int id)
+    {
+        return await borrowingsServices.AvgShtrafSrokAsync(id);
+    }
+
+
+
 
 
 }
