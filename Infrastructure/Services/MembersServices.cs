@@ -60,4 +60,20 @@ public class MembersServices : IMembersServices
         var result = await connection.ExecuteAsync(cmd, members);
         return result > 0;
     }
+
+    //2
+
+    public async Task<Members?> ActiveMembers(int id)
+    {
+        using var connection = await context.GetConnection();
+        var cmd = @"select m.* from members m
+                    join borrowings b on m.memberid = b.borrowingid
+                    group by m.memberid, m.fullname, m.phone, m.email, m.membershipdate
+                    order by count(b.borrowingid) desc
+                    limit 1";
+        var result = await connection.QuerySingleOrDefaultAsync<Members?>(cmd, new { memberId = id });
+        return result;
+    }
+
+    
 }

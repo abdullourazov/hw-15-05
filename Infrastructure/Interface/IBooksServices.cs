@@ -9,4 +9,5 @@ public interface IBooksServices
     Task<Books?> GetBooksByIdAsync(int id);
     Task<bool> UpdateBooksAsync(Books books);
     Task<bool> DeleteBooksAsync(Books books);
+    Task<Books?> PopularBook(int id);
 }
