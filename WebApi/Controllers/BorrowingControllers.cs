@@ -5,12 +5,12 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers;
 
+
 [ApiController]
 [Route("api/[Controller]")]
-public class BorrowingControllers : ControllerBase
-{
-    private IBorrowingsServices borrowingsServices = new BorrowingsServices();
 
+public class BorrowingControllers(IBorrowingsServices borrowingsServices)
+{
     [HttpGet]
     public async Task<List<Borrowings>> GetAllBorrowingsAsync()
     {

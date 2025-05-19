@@ -9,9 +9,8 @@ namespace WebApi.Controllers;
 [ApiController]
 [Route("api/[Controller]")]
 
-public class MembersControllers : ControllerBase
+public class MembersControllers(IMembersServices membersServices)
 {
-    private IMembersServices membersServices = new MembersServices();
 
     [HttpPost]
     public async Task<int> AddMembersAsync(Members members)

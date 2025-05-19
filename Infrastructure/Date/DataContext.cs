@@ -1,9 +1,11 @@
+
+using Infrastructure.Interface;
 using Npgsql;
 
 namespace Infrastructure.Date;
 
 
-public class DataContext
+public class DataContext 
 {
     private const string ConnectionString = "Server=localhost; Database=library; User Id=postgres; Password=35709120";
 
@@ -13,3 +15,6 @@ public class DataContext
     }
 
 }
+
+
+

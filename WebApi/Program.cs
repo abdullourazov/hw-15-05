@@ -1,13 +1,15 @@
+using Infrastructure.Date;
 using Infrastructure.Interface;
 using Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container
-builder.Services.AddSwaggerGen(); // Swagger документация
-builder.Services.AddControllers(); // Контроллеры
-// builder.Services.AddScoped<IBooksServices, BooksServices>(); 
-// builder.Services.AddScoped<IMembersServices, BooksServices>(); 
+builder.Services.AddSwaggerGen(); 
+builder.Services.AddControllers(); 
+builder.Services.AddScoped<DataContext, DataContext>();
+builder.Services.AddScoped<IBooksServices, BooksServices>(); 
+builder.Services.AddScoped<IBorrowingsServices, BorrowingsServices>(); 
+builder.Services.AddScoped<IMembersServices, MembersServices>(); 
 
 var app = builder.Build();
 

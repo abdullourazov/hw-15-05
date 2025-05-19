@@ -2,12 +2,12 @@ using Dapper;
 using Domain.Entities;
 using Infrastructure.Date;
 using Infrastructure.Interface;
+using Npgsql;
 
 namespace Infrastructure.Services;
 
-public class BooksServices : IBooksServices
-{
-    private readonly DataContext context = new();
+public class BooksServices(DataContext context) : IBooksServices
+{                           
     public async Task<int> AddBooksAsync(Books books)
     {
         using var connection = await context.GetConnection();
@@ -117,9 +117,6 @@ public class BooksServices : IBooksServices
                     order by  count(br.bookid) desc
                     limit 1";
         var result = await connection.QuerySingleOrDefaultAsync<string>(cmd);
-        return result;
+        return result == null ? "not succesfully" : "succesfully";
     }
-
-
-
 }

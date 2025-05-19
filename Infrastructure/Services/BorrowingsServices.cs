@@ -5,10 +5,8 @@ using Infrastructure.Interface;
 
 namespace Infrastructure.Services;
 
-public class BorrowingsServices : IBorrowingsServices
+public class BorrowingsServices(DataContext context) : IBorrowingsServices
 {
-    private readonly DataContext context = new();
-
     public async Task<List<Borrowings>> GetAllBorrowingsAsync()
     {
         using var connection = await context.GetConnection();
@@ -17,7 +15,7 @@ public class BorrowingsServices : IBorrowingsServices
         return result.ToList();
     }
 
-    public async Task<Borrowings?> GetBorrowingsByMemberId(int memberId)
+    public async Task<Borrowings?> GetBorrowingsByMemberIdAsync(int memberId)
     {
         using var connection = await context.GetConnection();
         var cmd = @"select * from borrowings 

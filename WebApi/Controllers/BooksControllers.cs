@@ -9,9 +9,8 @@ namespace WebApi.Controllers;
 [ApiController]
 [Route("api/[Controller]")]
 
-public class BooksControllers : ControllerBase
+public class BooksControllers(IBooksServices booksServices)
 {
-    private IBooksServices booksServices = new BooksServices();
 
     [HttpPost]
     public async Task<int> AddBooksAsync(Books books)
