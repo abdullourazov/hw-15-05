@@ -1,17 +1,18 @@
+using Domain.ApiResponsice;
 using Domain.Entities;
 
 namespace Infrastructure.Interface;
 
 public interface IBooksServices
 {
-    Task<int> AddBooksAsync(Books books);
-    Task<List<Books>> WatchesBooksAsync();
-    Task<Books?> GetBooksByIdAsync(int id);
-    Task<bool> UpdateBooksAsync(Books books);
-    Task<bool> DeleteBooksAsync(Books books);
-    Task<Books?> PopularBookAsync(int id);
-    Task<List<Books>> BookNotInMembersAsync();
-    Task<List<Books>> BooksNotAvailableCopiesAsync();
-    Task<int> BooksNotGetAsync(Books books);
-    Task<string> PopularGenreAsync();
+    Task<Response<int>> AddBooksAsync(Books books);
+    Task<Response<List<Books>>> WatchesBooksAsync();
+    Task<Response<Books?>> GetBooksByIdAsync(int id);
+    Task<Response<bool>> UpdateBooksAsync(Books books);
+    Task<Response<bool>> DeleteBooksAsync(Books books);
+    Task<Response<Books?>> PopularBookAsync(int id);
+    Task<Response<List<Books>>> BookNotInMembersAsync();
+    Task<Response<List<Books>>> BooksNotAvailableCopiesAsync();
+    Task<Response<int>> BooksNotGetAsync(Books books);
+    Task<Response<string>> PopularGenreAsync();
 }

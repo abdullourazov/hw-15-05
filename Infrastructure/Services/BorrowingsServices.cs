@@ -1,4 +1,6 @@
+using System.Net;
 using Dapper;
+using Domain.ApiResponsice;
 using Domain.Entities;
 using Infrastructure.Date;
 using Infrastructure.Interface;
@@ -7,24 +9,26 @@ namespace Infrastructure.Services;
 
 public class BorrowingsServices(DataContext context) : IBorrowingsServices
 {
-    public async Task<List<Borrowings>> GetAllBorrowingsAsync()
+    public async Task<Response<List<Borrowings>>> GetAllBorrowingsAsync()
     {
         using var connection = await context.GetConnection();
         var cmd = @"select * from borrowings";
         var result = await connection.QueryAsync<Borrowings>(cmd);
-        return result.ToList();
+        return result == null ? new Response<List<Borrowings>>("Borrowings not found", HttpStatusCode.NotFound)
+        : new Response<List<Borrowings>>(result.ToList(), "Borrowing succesfully retrivered");
     }
 
-    public async Task<Borrowings?> GetBorrowingsByMemberIdAsync(int memberId)
+    public async Task<Response<Borrowings?>> GetBorrowingsByMemberIdAsync(int memberId)
     {
         using var connection = await context.GetConnection();
         var cmd = @"select * from borrowings 
                     memberId = @memberId";
         var result = await connection.QueryFirstOrDefaultAsync<Borrowings?>(cmd, new { memberId = memberId });
-        return result;
+        return result == null ? new Response<Borrowings?>("Borrrowings not found", HttpStatusCode.NotFound)
+        : new Response<Borrowings?>(result, "Borrowings succesfully retrivered");
     }
 
-    public async Task<string> CreateBorrowingAsync(Borrowings borrowings)
+    public async Task<Response<string>> CreateBorrowingAsync(Borrowings borrowings)
     {
         using var connection = await context.GetConnection();
         var bookCommand = @"select * from books 
@@ -33,17 +37,17 @@ public class BorrowingsServices(DataContext context) : IBorrowingsServices
 
         if (book == null)
         {
-            return "Book not found";
+            return new Response<string>("Borrowing not found", HttpStatusCode.NotFound);
         }
 
         if (book.Availabcopies <= 0)
         {
-            return "Available copies are not available";
+            return new Response<string>("Available copies are not available", HttpStatusCode.NotFound);
         }
 
         if (borrowings.BorrowDate >= borrowings.DueDate)
         {
-            return "Borrowing due date is earlier";
+            return new Response<string>("Borrowing due date is earlier", HttpStatusCode.NotFound);
         }
 
         var borrowingCommand = @"insert into borrowings(BookId, memberId, BorrowDate, DueDate)
@@ -51,16 +55,16 @@ public class BorrowingsServices(DataContext context) : IBorrowingsServices
         var result = await connection.ExecuteAsync(borrowingCommand, borrowings);
         if (result == 0)
         {
-            return "Borrowing not created";
+            return new Response<string>("Borrowing not created", HttpStatusCode.NotFound);
         }
 
-        var updateBookCommand = @"update books set Availabcopies = Availabcopies - 1
+        var updateBookCommand = @"update books set Availabcopies = Availabcopies - 1                    
                                   where id = @id";
         await connection.ExecuteAsync(updateBookCommand, new { id = borrowings.BookId });
-        return "Borrowing created";
+        return new Response<string>(result.ToString(), message: "Borrowing created");
     }
 
-    public async Task<string> ReturnBookAsync(int BorrowingId)
+    public async Task<Response<string>> ReturnBookAsync(int BorrowingId)
     {
         using var connection = await context.GetConnection();
         var borrowingCommand = @"select * from borrowings 
@@ -68,7 +72,7 @@ public class BorrowingsServices(DataContext context) : IBorrowingsServices
         var borrowing = await connection.QueryFirstOrDefaultAsync<Borrowings>(borrowingCommand, new { id = BorrowingId });
         if (borrowing == null)
         {
-            return "Borrowing not found";
+            return new Response<string>("Borrowing not found", HttpStatusCode.NotFound);
         }
 
         borrowing.ReturnDate = DateTime.Now;
@@ -85,40 +89,38 @@ public class BorrowingsServices(DataContext context) : IBorrowingsServices
         var result = await connection.ExecuteAsync(updateBorrowingCommand, borrowing);
         if (result == 0)
         {
-            return "Borrowing not updated";
+            return new Response<string>("Borrowing not updated", HttpStatusCode.NotFound);
         }
 
         var updateBookCommand = @"update books 
                                 set availabcopies = @availabcopies + 1
                                 where bookid = @bookid";
         await connection.ExecuteAsync(updateBookCommand, new { id = borrowing.BorrowingId });
-        return "Borrowing updated";
+        return new Response<string>(result.ToString(), message: "Borrowing updated");
+
     }
 
     //3
-    public async Task<int> GetAllCountBorrowingsAsync(int id)
+    public async Task<Response<int>> GetAllCountBorrowingsAsync(int id)
     {
         using var connection = await context.GetConnection();
         var cmd = @"select br.bookid, count(*) from borrowings br
                     join books b on b.bookid = br.borrowingid
                     group by  br.bookid";
         var result = await connection.ExecuteScalarAsync<int>(cmd, new { borrowingid = id });
-        return result;
+        return result == 0 ? new Response<int>("Borrowings not found", HttpStatusCode.NotFound)
+        : new Response<int>(result, "Borrowings succesfullly retrivered");
     }
 
     //4
-    public async Task<decimal> AvgShtrafSrokAsync(int id)
+    public async Task<Response<decimal>> AvgShtrafSrokAsync(int id)
     {
         using var connection = await context.GetConnection();
         var cmd = @"select avg(fine)
                     from borrowings";
         var result = await connection.ExecuteScalarAsync<decimal>(cmd, new { borrowingid = id });
-        return result;
+        return result == 0 ? new Response<decimal>("Borrowings not found", HttpStatusCode.NotFound)
+        : new Response<decimal>(result, "Borrowings succesfully retriveres");
     }
-
-
-
-
-
 
 }
